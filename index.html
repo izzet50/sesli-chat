@@ -3,60 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sesli Chat Odaları</title>
-<script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.22.2.js"></script>
+<title>Sesli Chat</title>
 <style>
-body{background:#111;color:#fff;font-family:sans-serif;text-align:center;padding-top:100px}
-#room-select, #chat-area{background:#222;padding:30px;border-radius:15px;width:90%;max-width:400px;margin:auto}
-input{padding:10px;width:60%;border:none;border-radius:8px;margin-right:5px}
-button{padding:10px 15px;border:none;border-radius:8px;background:#4a5bff;color:#fff;cursor:pointer}
-button:hover{background:#3a4be0}
-#chat-area{display:none}
+body{background:#111;color:#fff;font-family:sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
+.box{background:#222;padding:30px;border-radius:15px;text-align:center;width:90%;max-width:400px}
+input{padding:10px;width:200px;border:none;border-radius:8px;margin:10px 0}
+button{padding:10px 20px;border:none;border-radius:8px;background:#4c6ef5;color:#fff;cursor:pointer}
+#room{display:none}
 </style>
 </head>
 <body>
-
-<div id="room-select">
-  <h1>🎤 Sesli Chat Odaları</h1>
-  <input id="roomName" placeholder="Oda adı">
-  <button id="joinBtn">Odaya Katıl</button>
+<div class="box" id="join">
+<h1>🎤 Sesli Chat</h1>
+<input id="roomName" placeholder="Oda adı">
+<br>
+<button onclick="joinRoom()">Odaya Katıl</button>
 </div>
-
-<div id="chat-area">
-  <h2>Oda: <span id="currentRoom"></span></h2>
-  <button id="micBtn">🎤 Konuş</button>
-  <button id="leaveBtn">Odadan Çık</button>
+<div class="box" id="room">
+<h2>Oda: <span id="rName"></span></h2>
+<button onclick="leaveRoom()">Odadan Çık</button>
 </div>
-
 <script>
-const APP_ID = "d18d81032de64e9ca0808f97b32c3583";
-let client = null;
-let localAudioTrack = null;
-
-document.getElementById('joinBtn').onclick = async () => {
-    const roomName = document.getElementById('roomName').value;
-    if(!roomName) return alert("Oda adı gir");
-    client = AgoraRTC.createClient({mode: "rtc", codec: "vp8"});
-    await client.join(APP_ID, roomName, null, null);
-    localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-    await client.publish([localAudioTrack]);
-    document.getElementById('room-select').style.display = "none";
-    document.getElementById('chat-area').style.display = "block";
-    document.getElementById('currentRoom').innerText = roomName;
+let localStream;
+function joinRoom(){
+const name=document.getElementById('roomName').value;
+if(!name)return alert('Oda adı yaz');
+document.getElementById('join').style.display='none';
+document.getElementById('room').style.display='block';
+document.getElementById('rName').innerText=name;
+navigator.mediaDevices.getUserMedia({audio:true}).then(s=>{localStream=s;}).catch(()=>{});
 }
-
-document.getElementById('leaveBtn').onclick = async () => {
-    if(localAudioTrack) localAudioTrack.close();
-    if(client) await client.leave();
-    document.getElementById('room-select').style.display = "block";
-    document.getElementById('chat-area').style.display = "none";
-}
-
-document.getElementById('micBtn').onclick = () => {
-    if(localAudioTrack) {
-        localAudioTrack.setEnabled(!localAudioTrack.enabled);
-        document.getElementById('micBtn').innerText = localAudioTrack.enabled? "🎤 Konuş" : "🔇 Kapalı";
-    }
+function leaveRoom(){
+if(localStream)localStream.getTracks().forEach(t=>t.stop());
+document.getElementById('room').style.display='none';
+document.getElementById('join').style.display='block';
 }
 </script>
 </body>
