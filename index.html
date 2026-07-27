@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -6,15 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sesli Chat Odaları</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.2.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>🎤 Sesli Chat Odaları</h1>
         <div id="room-select">
-            <input type="text" id="roomName" placeholder="Oda adı gir...">
+            <input type="text" id="roomName" placeholder="Oda adı">
             <button id="joinBtn">Odaya Katıl</button>
         </div>
-        <div id="chat-area" style="display:none;">
+        <div id="chat-area" style="display:none">
             <h2 id="currentRoom"></h2>
             <div id="users"></div>
             <button id="leaveBtn">Odadan Çık</button>
